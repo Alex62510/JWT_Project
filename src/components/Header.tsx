@@ -17,8 +17,6 @@ export const Header = () => {
                     <Link to={'/sing-in'}>
                         <li>Sing In</li>
                     </Link>
-
-
                 </ul>
             </div>
 
