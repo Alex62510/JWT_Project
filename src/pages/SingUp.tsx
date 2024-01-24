@@ -1,11 +1,12 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {ChangeEvent, FormEvent, useState} from "react";
 
-export const SingUp = () => {
+export const SignUp = () => {
     const [formData, setFormData] = useState({})
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    const navigate=useNavigate()
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({...formData, [e.target.id]: e.target.value})
     }
@@ -28,6 +29,7 @@ export const SingUp = () => {
                 setError(true)
                 return
             }
+            navigate('/sign-in')
         } catch (e) {
             setLoading(false)
             setError(true)

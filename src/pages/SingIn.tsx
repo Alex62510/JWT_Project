@@ -1,13 +1,14 @@
 
 
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {ChangeEvent, FormEvent, useState} from "react";
 
-export const SingIn = () => {
+export const SignIn = () => {
     const [formData, setFormData] = useState({})
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    const navigate=useNavigate()
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({...formData, [e.target.id]: e.target.value})
     }
@@ -30,6 +31,7 @@ export const SingIn = () => {
                 setError(true)
                 return
             }
+            navigate('/')
         } catch (e) {
             setLoading(false)
             setError(true)
@@ -67,7 +69,7 @@ export const SingIn = () => {
             <div className={'flex gap-2 mt-5'}>
                 <p>Don't have an account?</p>
                 <Link to={'/sign-up'}>
-                    <span className={'text-blue-500'}>Sign in</span>
+                    <span className={'text-blue-500'}>Sign up</span>
                 </Link>
             </div>
             <p className={'text-red-700 mt-5'}>
