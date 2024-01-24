@@ -8,6 +8,7 @@ import {SignUp} from "./pages/SingUp.tsx";
 
 function App() {
     return (
+
         <BrowserRouter>
             <Header/>
             <Routes>
@@ -18,6 +19,7 @@ function App() {
                 <Route path={'/profile'} element={<Profile/>}/>
             </Routes>
         </BrowserRouter>
+
     )
 }
 

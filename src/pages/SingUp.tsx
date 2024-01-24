@@ -6,7 +6,7 @@ export const SignUp = () => {
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
 
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({...formData, [e.target.id]: e.target.value})
     }
