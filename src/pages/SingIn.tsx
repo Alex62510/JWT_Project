@@ -3,6 +3,7 @@ import {ChangeEvent, FormEvent, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../redux/store.ts";
 import {signInFailure, signInStart, signInSuccess} from "../redux/user/userSlice.tsx";
+import {OAuth} from "../components/OAuth.tsx";
 
 export const SignIn = () => {
         const [formData, setFormData] = useState({})
@@ -66,6 +67,7 @@ export const SignIn = () => {
                         {loading ? 'Loading...' : ' Sign In'}
 
                     </button>
+                    <OAuth/>
                 </form>
                 <div className={'flex gap-2 mt-5'}>
                     <p>Don't have an account?</p>
