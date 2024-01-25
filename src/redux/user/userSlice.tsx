@@ -4,11 +4,24 @@ type ErrorType={
     message: string;
 
 };
-type InitialStateType = typeof initialState
-const initialState = {
+export type UserType={
+    _id:string,
+    username:string,
+    email:string,
+    profilePicture:string,
+    createdAt:string,
+    updatedAt:string,
+    __v:number
+}
+type InitialStateType = {
+    currentUser:UserType | null,
+    loading:boolean,
+    error:ErrorType | boolean,
+}
+const initialState:InitialStateType = {
     currentUser: null,
     loading: false,
-    error: false as ErrorType | boolean,
+    error: false
 }
 const userSlice = createSlice({
     name: 'user',
