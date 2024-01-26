@@ -58,7 +58,7 @@ export const Profile = () => {
                             <input type={"file"} ref={fileRef} hidden accept={"image/*"}
                                    onChange={handleSaveImage}/>
                             <img
-                                src={currentUser.profilePicture}
+                                src={formData.profilePicture || currentUser.profilePicture}
                                 alt="profile"
                                 className={'mt-2 h-24 w-24 self-center cursor-pointer rounded-full object-cover'}
                                 onClick={() => fileRef.current?.click()}
