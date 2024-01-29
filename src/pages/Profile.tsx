@@ -8,7 +8,8 @@ import {
     deleteUserStart, deleteUserSuccess,
     updateUserFailure,
     updateUserStart,
-    updateUserSuccess
+    updateUserSuccess,
+    signOut
 } from "../redux/user/userSlice.tsx";
 
 
@@ -89,22 +90,30 @@ export const Profile = () => {
             }
         }
         const handleDeleteAccount = async () => {
-          try {
-              dispatch(deleteUserStart())
-              if (currentUser) {
-                  const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-                      method: "DELETE",
-                  })
-                  const data = await res.json()
-                  if (data.success === false) {
-                      dispatch(deleteUserFailure(data))
-                      return
-                  }
-                  dispatch(deleteUserSuccess(data))
-              }
-          }  catch (e) {
-              dispatch(deleteUserFailure(e))
-          }
+            try {
+                dispatch(deleteUserStart())
+                if (currentUser) {
+                    const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+                        method: "DELETE",
+                    })
+                    const data = await res.json()
+                    if (data.success === false) {
+                        dispatch(deleteUserFailure(data))
+                        return
+                    }
+                    dispatch(deleteUserSuccess(data))
+                }
+            } catch (e) {
+                dispatch(deleteUserFailure(e))
+            }
+        }
+        const handleSignoutAccount = async () => {
+            try {
+                await fetch('/api/auth/signout/')
+                dispatch(signOut())
+            } catch (e) {
+                console.log(e)
+            }
         }
 
         return (
@@ -164,7 +173,8 @@ export const Profile = () => {
                       onClick={handleDeleteAccount}>
                     Delete Account
                 </span>
-                    <span className={'text-red-700 cursor-pointer'}>
+                    <span className={'text-red-700 cursor-pointer'}
+                          onClick={handleSignoutAccount}>
                     Sign out
                 </span>
                 </div>
