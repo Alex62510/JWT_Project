@@ -4,6 +4,8 @@ import {ChangeEvent, FormEvent, useEffect, useRef, useState} from "react";
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 import {app} from "../firebase.ts";
 import {
+    deleteUserFailure,
+    deleteUserStart, deleteUserSuccess,
     updateUserFailure,
     updateUserStart,
     updateUserSuccess
@@ -86,6 +88,24 @@ export const Profile = () => {
                 dispatch(updateUserFailure(e))
             }
         }
+        const handleDeleteAccount = async () => {
+          try {
+              dispatch(deleteUserStart())
+              if (currentUser) {
+                  const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+                      method: "DELETE",
+                  })
+                  const data = await res.json()
+                  if (data.success === false) {
+                      dispatch(deleteUserFailure(data))
+                      return
+                  }
+                  dispatch(deleteUserSuccess(data))
+              }
+          }  catch (e) {
+              dispatch(deleteUserFailure(e))
+          }
+        }
 
         return (
             <div className={'p-3 max-w-lg mx-auto'}>
@@ -136,11 +156,12 @@ export const Profile = () => {
                     />
                     <button
                         className={'bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-80 disabled:opacity-70'}>
-                        {loading?'Loading...': 'Update'}
+                        {loading ? 'Loading...' : 'Update'}
                     </button>
                 </form>
                 <div className={'flex justify-between mt-5'}>
-                <span className={'text-red-700 cursor-pointer'}>
+                <span className={'text-red-700 cursor-pointer'}
+                      onClick={handleDeleteAccount}>
                     Delete Account
                 </span>
                     <span className={'text-red-700 cursor-pointer'}>
