@@ -1,17 +1,28 @@
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store.ts";
-import {ChangeEvent, useEffect, useRef, useState} from "react";
+import {ChangeEvent, FormEvent, useEffect, useRef, useState} from "react";
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 import {app} from "../firebase.ts";
+import {
+    updateUserFailure,
+    updateUserStart,
+    updateUserSuccess
+} from "../redux/user/userSlice.tsx";
 
+
+interface FormData {
+    profilePicture?: string;
+}
 
 export const Profile = () => {
-        const {currentUser} = useSelector((state: RootState) => state.user)
+        const {currentUser, loading, error} = useSelector((state: RootState) => state.user)
+        const dispatch = useDispatch()
         const fileRef = useRef<HTMLInputElement>(null)
         const [image, setImage] = useState<File | undefined>(undefined)
         const [imagePercent, setImagePercent] = useState(0)
         const [imageError, setImageError] = useState(false)
-        const [formData, setFormData] = useState({})
+        const [formData, setFormData] = useState<FormData>({})
+        const [updateSuccess, setUpdateSuccess] = useState(false)
 
         const handleSaveImage = (e: ChangeEvent<HTMLInputElement>) => {
             e.target.files && setImage(e.target.files[0])
@@ -48,11 +59,38 @@ export const Profile = () => {
                 }
             )
         }
+        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+            setFormData({...formData, [e.target.id]: e.currentTarget.value})
+        }
+        const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+            e.preventDefault()
+            try {
+                dispatch(updateUserStart())
+                if (currentUser) {
+                    const res = await fetch(`/api/user/update/${currentUser._id}`, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    })
+                    const data = await res.json()
+                    if (data.success === false) {
+                        dispatch(updateUserFailure(data))
+                        return
+                    }
+                    dispatch(updateUserSuccess(data))
+                }
+                setUpdateSuccess(true)
+            } catch (e) {
+                dispatch(updateUserFailure(e))
+            }
+        }
 
         return (
             <div className={'p-3 max-w-lg mx-auto'}>
                 <h1 className={'text-3xl font-semibold text-center my-7'}>Profile</h1>
-                <form className={'flex flex-col gap-4'}>
+                <form className={'flex flex-col gap-4'} onSubmit={handleSubmit}>
                     {currentUser
                         && <>
                             <input type={"file"} ref={fileRef} hidden accept={"image/*"}
@@ -79,19 +117,26 @@ export const Profile = () => {
                         defaultValue={currentUser ? currentUser.username : ''}
                         id={'username'}
                         placeholder={"Username"}
-                        className={'bg-slate-100 rounded-lg p-3'}/>
+                        className={'bg-slate-100 rounded-lg p-3'}
+                        onChange={handleChange}
+                    />
                     <input
                         type="text"
                         defaultValue={currentUser ? currentUser.email : ''}
                         id={'email'}
                         placeholder={"Email"}
-                        className={'bg-slate-100 rounded-lg p-3'}/>
+                        className={'bg-slate-100 rounded-lg p-3'}
+                        onChange={handleChange}
+                    />
                     <input
                         type="password" id={'password'}
                         placeholder={"Password"}
-                        className={'bg-slate-100 rounded-lg p-3'}/>
+                        className={'bg-slate-100 rounded-lg p-3'}
+                        onChange={handleChange}
+                    />
                     <button
-                        className={'bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-80 disabled:opacity-70'}>Update
+                        className={'bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-80 disabled:opacity-70'}>
+                        {loading?'Loading...': 'Update'}
                     </button>
                 </form>
                 <div className={'flex justify-between mt-5'}>
@@ -102,6 +147,12 @@ export const Profile = () => {
                     Sign out
                 </span>
                 </div>
+                <p className={'text-red-700 mt-5'}>
+                    {error && "Something went wrong!"}
+                </p>
+                <p className={'text-green-700 mt-5'}>
+                    {updateSuccess && "User updated successfully"}
+                </p>
             </div>
         );
     }

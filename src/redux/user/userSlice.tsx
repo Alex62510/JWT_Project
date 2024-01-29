@@ -1,24 +1,24 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-type ErrorType={
+type ErrorType = {
     message: string;
 
 };
-export type UserType={
-    _id:string,
-    username:string,
-    email:string,
-    profilePicture:string,
-    createdAt:string,
-    updatedAt:string,
-    __v:number
+export type UserType = {
+    _id: string,
+    username: string,
+    email: string,
+    profilePicture: string,
+    createdAt: string,
+    updatedAt: string,
+    __v: number
 }
 type InitialStateType = {
-    currentUser:UserType | null,
-    loading:boolean,
-    error:ErrorType | boolean,
+    currentUser: UserType | null,
+    loading: boolean,
+    error: ErrorType | boolean,
 }
-const initialState:InitialStateType = {
+const initialState: InitialStateType = {
     currentUser: null,
     loading: false,
     error: false
@@ -38,8 +38,27 @@ const userSlice = createSlice({
         signInFailure: (state, action) => {
             state.loading = false
             state.error = action.payload
-        }
+        },
+        updateUserStart: (state) => {
+            state.loading = true
+        },
+        updateUserSuccess: (state: InitialStateType, action) => {
+            state.currentUser = action.payload
+            state.error = false
+            state.loading = false
+        },
+        updateUserFailure: (state, action) => {
+            state.loading = false
+            state.error = action.payload
+        },
     }
 })
-export const {signInStart, signInFailure, signInSuccess} = userSlice.actions
+export const {
+    signInStart,
+    signInFailure,
+    signInSuccess,
+    updateUserStart,
+    updateUserSuccess,
+    updateUserFailure
+} = userSlice.actions
 export default userSlice.reducer
